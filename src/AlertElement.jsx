@@ -3,69 +3,49 @@ import { useState, useEffect } from 'react';
 import alertImg from "./assets/alertIcon.jpg";
 
 
-const AlertElement = ({id, onRemove, title, desc, HH, mm, timeout }) => {
+const AlertElement = ({id, onRemove, data, onUpdate }) => {
 
-  const [elementId, setElementId] = useState(id);
-  const [alertTitle, setAlertTitle] = useState(title || "sadasd");
-  const [alertDescription, setAlertDescription] = useState(desc || "");
-  const [hours, setHours] = useState(Number(HH) || 0);
-  const [minutes, setMinutes] = useState(Number(mm) || 0);
-  const [alertTimeout, setAlertTimeout] = useState(timeout || 0);
+  const [alertTitle, setAlertTitle] = useState(data.title);
+  const [alertDescription, setAlertDescription] = useState(data.description);
+  const [hours, setHours] = useState(Number(data.HH));
+  const [minutes, setMinutes] = useState(Number(data.mm));
+  const [alertTimeout, setAlertTimeout] = useState(data.HHtimeout);
 
-  // Saving elements to localStorage whenever elements change
-  const saveData = () => {
-    console.log("save")
-    // Create an object with the data to be stored
-    const elementInfo = {
-      id,
-      alertTitle,
-      alertDescription,
-      hours,
-      minutes,
-      alertTimeout,
-    };
+  // update data when loaded data is available
+  useEffect(()=>{
+    setAlertTitle(data.title);
+    setAlertDescription(data.description);
+    setHours(data.HH);
+    setMinutes(data.minutes);
+    setAlertTimeout(data.timeout);
+  },[data])
+
   
-    // Store the element info as a JSON string in localStorage
-    localStorage.setItem('elements', JSON.stringify(elementInfo));
-    console.log(elementInfo)  
-  }
-
-  // useEffect(() => {
-  //   // Create an object with the data to be stored
-  //   const elementLoadedInfo =  JSON.parse(localStorage.getItem('elements'));
-  //   console.log(elementLoadedInfo)
-    
-  //   setElementId(elementLoadedInfo.id)  
-  //   setAlertTitle(elementLoadedInfo.alertTitle);
-  //   setAlertDescription(elementLoadedInfo.alertDescription);
-  //   setHours(elementLoadedInfo.hours);
-  //   setMinutes(elementLoadedInfo.minutes);
-  //   setAlertTimeout(elementLoadedInfo.alertTimeout);
-
-    
-  // }, []);
 
   const handleTitleChange = (e) => {
     setAlertTitle(e.target.value);
-    saveData();
+    onUpdate(id, { title: e.target.value });
+  
   };
 
   const handleDescriptionChange = (e) => {
     setAlertDescription(e.target.value);
-    saveData();
+    onUpdate(id, { description: e.target.value });
+ 
 
   };
 
   const handleHourChange = (e) => {
     setHours(e.target.value);
-    saveData();
+    onUpdate(id, { HH: e.target.value });
+   
  
   };
 
   const handleMinuteChange = (e) => {
     setMinutes(e.target.value);
-    saveData();
- 
+    onUpdate(id, { mm: e.target.value });
+
   };
 
   const setTimer = (e) => {  
@@ -94,14 +74,14 @@ const AlertElement = ({id, onRemove, title, desc, HH, mm, timeout }) => {
 }
   return (
     <>
-        <div>
-        <input  placeholder = "Title or case" type="text" onChange={handleTitleChange} required/>
-        <input  placeholder = "Description" type="text" onChange={handleDescriptionChange} required/>
+        <div id={id}>
+        <input  placeholder = "Title or case" type="text" onChange={handleTitleChange} value = {alertTitle} required/>
+        <input  placeholder = "Description" type="text" onChange={handleDescriptionChange} value = {alertDescription} required/>
         </div>
-        <input type="number" onChange={handleHourChange} id="hour" name="hour" min="0" max="2" placeholder="HH" required />
-        <input type="number" onChange={handleMinuteChange} id="hour" name="hour" min="0" max="2" placeholder="mm" required />
+        <input type="number" onChange={handleHourChange} id="hour" name="hour" min="0" max="2" placeholder="HH" value = {hours} required />
+        <input type="number" onChange={handleMinuteChange} id="hour" name="hour" min="0" max="59" placeholder="mm"  value = {minutes} required />
         <button onClick={setTimer}>Set Timer</button>
-        <button onClick={() =>onRemove(elementId)}>X</button>
+        <button onClick={() =>onRemove(id)}>X</button>
     </>
   )
 }
