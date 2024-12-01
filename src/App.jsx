@@ -2,8 +2,7 @@
 import CreateNewAlertBtn from "./CreateNewAlertBtn";
 function App() {
   return (
-    <div className="App">
-      <CreateNewAlertBtn />
+    <div className="App"> <CreateNewAlertBtn />
     </div>
   );
 }

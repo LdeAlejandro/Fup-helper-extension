@@ -1,51 +1,47 @@
 import React, {useState, useEffect} from 'react';
-import AlertElement from './AlertElement';
+import AlertElement from './AlertElement.jsx';
 
 const CreateNewAlertBtn = () => {
-  const localStorageElements = JSON.parse(localStorage.getItem("elements"));
-  const [idCounter, setIdCounter] = useState(0); // Counter for generating unique IDs
+  let localStorageElements;
+  try {
+    localStorageElements = JSON.parse(localStorage.getItem("elements")) || [];
+  } catch (error) {
+    localStorageElements = [];
+  }
   const [elements, setElements] = useState(localStorageElements);
+  const [idCounter, setIdCounter] = useState(elements.id || 0); // Counter for generating unique IDs
 
   
     
     // save data everytime it changes in the local storage
     useEffect(()=>{
-      console.log("save ***************************")
-      localStorage.setItem("elements",  JSON.stringify(elements));
-      console.log(elements)
-      console.log(" ***************************")
+      localStorage.setItem("elements",  JSON.stringify(elements)); // Save elements to localStorage 
     },[elements])
 
     // load data from localStorage
 
-    const addElement = () => {
-      const newId = idCounter + 1;
-      setIdCounter(newId);
+    const addElement = () => { // Add new element to elements array 
+      const newId = idCounter + 1; // Generate unique ID
+      setIdCounter(newId); // Increment ID counter
   
-      const newElementData = {
-        ...elements,
-        id: newId
+      const newElementData = { // Create new element data
+        id: newId // Add new ID 
       };
-
-  
-      // Add new element to elements array
-      setElements(prevElements => [...prevElements, newElementData]);
-    };
-  
+      setElements(prevElements => [...prevElements, newElementData]); // Creates a new array by copying the previous elements 
+      //and appending the new element (newElementData) to it.
+    }
    
     const removeElement = (id) => {
-        console.log("Removing element with ID:", id);
-        console.log(" Current elements:", elements);
-        setElements(prevElements => 
-          prevElements.filter(element => element.id !== id)
+        setElements(prevElements => // Update elements array 
+          prevElements.filter(element => element.id !== id) // Filter out the element with the given ID // Remove the element from the state
         ); // Remove the ID from the state
       };
 
-      const updateElementData = (id, updatedData) => {
+      const updateElementData = (id, updatedData) => { // Update element data
 
-        setElements(prevElements => 
-          prevElements.map(element => 
-            element.id === id ? { ...element, ...updatedData } : element
+        setElements(prevElements =>  // Update elements array 
+          prevElements.map(element =>  // Map over the elements array
+            element.id === id ? { ...element, ...updatedData } : element // Update the element with the given ID
           )
         );
       };
@@ -67,4 +63,4 @@ const CreateNewAlertBtn = () => {
   )
 }
 
-export default CreateNewAlertBtn
+export default CreateNewAlertBtn;
