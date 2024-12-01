@@ -1,0 +1,28 @@
+.create-alert-Container{
+     display: flex;
+     flex-direction: column;
+  }
+
+  .alerts-Container{
+    display: flex;
+    justify-content: center; 
+  }
+
+  .createAlertBtn{
+    display: flex;
+    margin: 20px auto;
+    max-width: 300px;
+    justify-content: flex-end;
+  }
+
+
+  .createAlertBtn button  {
+  background-color: #1976D2;
+  color: #E0E0E0;
+  border: 1px solid #333333;
+  }
+  
+
+  .createAlertBtn button:hover  {
+    background-color: #1565C0; 
+  }

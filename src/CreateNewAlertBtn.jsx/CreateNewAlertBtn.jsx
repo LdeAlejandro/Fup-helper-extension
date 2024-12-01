@@ -1,5 +1,6 @@
 import React, {useState, useEffect} from 'react';
-import AlertElement from './AlertElement.jsx';
+import AlertElement from '../AlertElement/AlertElement.jsx';
+import './CreateNewAlertBtn.css';
 
 const CreateNewAlertBtn = () => {
   let localStorageElements;
@@ -48,8 +49,9 @@ const CreateNewAlertBtn = () => {
 
   return (
     <>
+    <div className='create-alert-Container'>
        {elements.map((element) => (
-        <div key={element.id}>
+        <div  className='alerts-Container' key={element.id}>
           <AlertElement 
             id={element.id} 
             onUpdate={updateElementData}
@@ -58,8 +60,11 @@ const CreateNewAlertBtn = () => {
           />
         </div>
       ))}
-    <button onClick={addElement}>+</button>
-  </>
+  </div>
+  <div className='createAlertBtn'>
+      <button onClick={addElement}>+</button>
+     </div>
+      </>
   )
 }
 
