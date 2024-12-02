@@ -4,58 +4,48 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // Function to create a notification
-function createNotification(title, message, iconUrl, timeout) {
-  let currentTimeOut = timeout; 
-   // Update the countdown value every second
-const countdownInterval = setInterval(() => {
-  currentTimeOut = Math.max(Number(currentTimeOut) - 1000, 0);
+function createNotification(id, title, message, iconUrl, timeout) {
+  let currentTimeOut = timeout;
 
-  // Log the adjusted countdown for debugging
-  console.log('Adjusted Timeout:', currentTimeOut);
-  updateTimeOut(currentTimeOut);
+  // Update the countdown value every second
+  const countdownInterval = setInterval(() => {
+    currentTimeOut = Math.max(Number(currentTimeOut) - 1000, 0);
 
-  // Stop the interval when the countdown reaches 0
-  if (currentTimeOut === 0) {
-    clearInterval(countdownInterval);
-    console.log("Countdown complete");
-  }
-}, 1000);
+    // Log the adjusted countdown for debugging
+    console.log('Adjusted Timeout:', currentTimeOut);
+    updateTimeOut(id, currentTimeOut);
+
+    // Stop the interval when the countdown reaches 0
+    if (currentTimeOut === 0) {
+      clearInterval(countdownInterval);
+      console.log('Countdown complete');
+    }
+  }, 1000);
 
   setTimeout(() => {
-    console.log("timeout: ", timeout)
-     // eslint-disable-next-line no-undef
-  chrome.notifications.create({
-    type: 'basic',
-    iconUrl: iconUrl,
-    title: title,
-    message: message,
-    priority: 2,
-  });
+    console.log('timeout:', timeout);
+    // Corrected chrome.notifications.create call
+    // eslint-disable-next-line no-undef
+    chrome.notifications.create(
+      id, // Notification ID as a separate parameter
+      {
+        type: 'basic',
+        iconUrl: iconUrl,
+        title: title,
+        message: message,
+        priority: 2,
+      },
+      () => {// eslint-disable-next-line no-undef
+        if (chrome.runtime.lastError) {
+          // eslint-disable-next-line no-undef
+          console.error('Notification error:', chrome.runtime.lastError);
+        } else {
+          console.log('Notification created successfully.');
+        }
+      }
+    );
   }, timeout);
- 
 }
-
-// Listen for messages from the React app (popup or content script) to trigger notifications
-// eslint-disable-next-line no-undef
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-
-
-    // // eslint-disable-next-line no-undef
-    // chrome.storage.local.set({ message }, () => {
-    //   // eslint-disable-next-line no-undef
-    //   if (chrome.runtime.lastError) {
-    //     // eslint-disable-next-line no-undef
-    //     console.error('Error saving elements:', chrome.runtime.lastError);
-    //   }
-    // });
-
-    // console.log(chrome.storage.local.get())
-
-  if (message.type === 'showNotification') {
-      console.log("fire extension alert")
-    createNotification(message.title, message.message, message.iconUrl, message.timeout);
-  }
-});
 
 function updateTimeOut(id, currentTimeOut) {
   // eslint-disable-next-line no-undef
