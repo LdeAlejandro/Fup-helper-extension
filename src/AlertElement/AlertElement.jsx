@@ -107,6 +107,7 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
 
       // eslint-disable-next-line no-undef
       chrome.runtime.sendMessage({
+        id: id,
         type: 'showNotification',
         title: alertTitle,
         message: alertDescription,
