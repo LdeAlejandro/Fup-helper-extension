@@ -7,7 +7,7 @@
     "default_popup": "index.html"
   },
   "permissions": [
-    "storage","notifications","alarms", "activeTab"
+    "storage","notifications","alarms"
   ],
   "background": {
     "service_worker": "background.js"

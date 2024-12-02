@@ -10,7 +10,7 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
   const [hours, setHours] = useState(data.HH || "");
   const [minutes, setMinutes] = useState(data.mm || "");
   const [timeLeft, setTimeLeft] = useState(data.timeout || 0);
-  const [showElements , setShowElements] = useState(data.showElements || true);
+  const [showElements , setShowElements] = useState(true);
   let timerRef = useRef(null);
 
   useEffect(() => {
@@ -19,7 +19,6 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
     setHours(data.HH || "");
     setMinutes(data.mm || "");
     setTimeLeft(data.timeout || 0);
-    
   }, [data]);
 
   // Countdown logic and notification trigger
@@ -94,13 +93,11 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
 
   const handleEdit= ()=>{
     setShowElements(true);
-    onUpdate(id, { showElements: true });
   }
 
   const setTimer = () => {
   
     setShowElements(false);
-    onUpdate(id, { showElements: false });
     const hoursInMilliseconds = Number(hours) * 60 * 60 * 1000;
     const minutesInMilliseconds = Number(minutes) * 60 * 1000;
     const totalMilliseconds = hoursInMilliseconds + minutesInMilliseconds;
@@ -130,19 +127,6 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
     if (timerRef.current) {
       clearTimeout(timerRef.current);
     }
-
-     // Remove the timer data from Chrome storage
-     // eslint-disable-next-line no-undef
-  chrome.storage.local.remove(id.toString(), () => {
-    // eslint-disable-next-line no-undef
-    if (chrome.runtime.lastError) {
-      // eslint-disable-next-line no-undef
-      console.error('Error removing timer data:', chrome.runtime.lastError);
-    } else {
-      console.log(`Timer data for alert ${id} has been removed from storage.`);
-    }
-  });
-
     onRemove(id);
   };
 

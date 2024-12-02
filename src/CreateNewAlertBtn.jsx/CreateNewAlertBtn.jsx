@@ -6,27 +6,21 @@ const CreateNewAlertBtn = () => {
 
   const [elements, setElements] = useState([]) || [];
   const [idCounter, setIdCounter] = useState(elements.id || 0); // Counter for generating unique IDs
-
+  
   // Load elements from chrome storage on component mount
   useEffect(() => {
-    
-      console.log("LOAD")
-      console.log("Stored ELements Create: " ,elements);
-      // eslint-disable-next-line no-undef
+    // eslint-disable-next-line no-undef
     chrome.storage.local.get('elements', (items) => {
       const storedElements = items.elements || [];
       setElements(storedElements);
-      console.log("LOAD ELEMENT: ", storedElements)
-     
 
       // Set idCounter based on stored elements
       if (storedElements.length > 0) {
         setIdCounter(storedElements[storedElements.length - 1].id + 1);
       }
-   
     });
-    
   }, []);
+
 
     // save data everytime it changes in the local storage
     useEffect(()=>{
@@ -39,12 +33,7 @@ const CreateNewAlertBtn = () => {
           console.error('Error saving elements:', chrome.runtime.lastError);
         }
       });
-
-      
     },[elements])
-
-
-
 
     // CountDown Timer
 
@@ -75,13 +64,11 @@ const CreateNewAlertBtn = () => {
             element.id === id ? { ...element, ...updatedData } : element // Update the element with the given ID
           )
         );
- 
       };
-
 
   return (
     <>
-    <div className='create-alert-Container' >
+    <div className='create-alert-Container'>
        {elements.map((element) => (
         <div  className='alerts-Container' key={element.id}>
           <AlertElement 
