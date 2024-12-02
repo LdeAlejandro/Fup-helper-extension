@@ -78,3 +78,10 @@ button {
   button.editElement:hover {
     background-color: #F9A825; /* Slightly darker red for hover */
   }
+
+  hr {
+    border: none; 
+    height: 1px; 
+    background-color: #E0E0E0; 
+    margin: 10px 0; 
+}

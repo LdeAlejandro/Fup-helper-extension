@@ -3,11 +3,14 @@ import alertImg from '../assets/alertIcon.jpg';
 import './AlertElement.css';
 
 const AlertElement = ({ id, onRemove, data, onUpdate }) => {
+
+
   const [alertTitle, setAlertTitle] = useState(data.title || "");
   const [alertDescription, setAlertDescription] = useState(data.description || "");
   const [hours, setHours] = useState(data.HH || "");
   const [minutes, setMinutes] = useState(data.mm || "");
   const [timeLeft, setTimeLeft] = useState(data.timeout || 0);
+  const [showElements , setShowElements] = useState(true);
   let timerRef = useRef(null);
 
   useEffect(() => {
@@ -24,26 +27,33 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
       //onUpdate(id, { timeout: timeLeft }); // update timeout 
       timerRef.current = setTimeout(() => { // set timer 
         setTimeLeft((prevTimeLeft) => Math.max(prevTimeLeft - 1000, 0)); // update time left Math.max prevent negative time
+        onUpdate(id, { timeout: timeLeft - 1000 });
+
       }, 1000);
     } else if (timeLeft === 0) {
       if (timerRef.current) { // check if the timer is different from null by the timer id
         clearTimeout(timerRef.current); // clear timeout 
 
-        if (Notification.permission === "granted") {
-          new Notification( alertTitle, { // create notification
-            body: alertDescription,
-            icon: alertImg
-          }); 
+        // if (Notification.permission === "granted") {
+        //   new Notification( alertTitle, { // create notification
+        //     body: alertDescription,
+        //     icon: alertImg
+        //   }); 
     
-          // eslint-disable-next-line no-undef
-          // chrome.runtime.sendMessage({
-          //   type: 'showNotification',
-          //   title: alertTitle,
-          //   message: alertDescription,
-          //   iconUrl: alertImg, // Make sure this path is correct relative to the extension's root
-          // });
-        }
+        
+        // }
       }
+
+            // // eslint-disable-next-line no-undef
+            // chrome.runtime.sendMessage({
+            //   type: 'showNotification',
+            //   title: alertTitle,
+            //   message: alertDescription,
+            //   iconUrl: alertImg,
+            //   timeout: timeLeft // Make sure this path is correct relative to the extension's root
+            // });
+
+        
       
     }
 
@@ -81,13 +91,28 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
     onUpdate(id, { mm: e.target.value });
   };
 
+  const handleEdit= ()=>{
+    setShowElements(true);
+  }
+
   const setTimer = () => {
+  
+    setShowElements(false);
     const hoursInMilliseconds = Number(hours) * 60 * 60 * 1000;
     const minutesInMilliseconds = Number(minutes) * 60 * 1000;
     const totalMilliseconds = hoursInMilliseconds + minutesInMilliseconds;
 
     setTimeLeft(totalMilliseconds);
     onUpdate(id, { timeout: totalMilliseconds });
+
+      // eslint-disable-next-line no-undef
+      chrome.runtime.sendMessage({
+        type: 'showNotification',
+        title: alertTitle,
+        message: alertDescription,
+        iconUrl: alertImg,
+        timeout: totalMilliseconds 
+      });
 
     if (Notification.permission !== "granted") {
       Notification.requestPermission().then((result) => {
@@ -107,12 +132,13 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
 
   return (
     <div className="alert-container">
-      <div id={id} className="title-description-container">
-        <p>
+              <p>
           Title: {alertTitle}
           <br />
           Time Left: {formatTime(timeLeft)}
         </p>
+        {showElements && (
+      <div id={id} className="title-description-container">
         <input
           placeholder="Title or case"
           type="text"
@@ -127,8 +153,10 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
           value={alertDescription}
           required
         />
-      </div>
+      </div>)} 
+     
       <div className="time-container">
+        {showElements && (<>
         <input
           type="number"
           onChange={handleHourChange}
@@ -150,14 +178,23 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
           placeholder="mm"
           value={minutes}
           required
-        />
+        />        
+        </>
+          
+        )} 
+        {showElements && (
         <button className="setTimer" onClick={setTimer}>
-          Set Timer
-        </button>
+          Set 
+        </button>)}
+        {!showElements && (
+        <button className="editElement" onClick={handleEdit}>
+          Edit
+        </button> )}
         <button className="deleteElement" onClick={handleLocalRemove}>
           X
         </button>
       </div>
+      <hr />
     </div>
   );
 };
