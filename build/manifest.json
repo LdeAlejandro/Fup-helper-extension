@@ -2,7 +2,12 @@
   "manifest_version": 3,
   "name": "Timer Alarm",
   "version": "1.0",
-  "description": "A simple React Chrome Extension to set alarm that sent notifications",
+  "description": "Set alarms that send notifications.",
+  "icons": {
+    "16": "alarme.png",
+      "48": "alarme.png",
+      "128": "alarme.png"
+  },
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -12,7 +17,7 @@
     }
   },
   "permissions": [
-    "storage","notifications","alarms"
+    "storage","notifications"
   ],
   "background": {
     "service_worker": "background.js"

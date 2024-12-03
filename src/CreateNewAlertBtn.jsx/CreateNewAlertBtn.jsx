@@ -65,6 +65,8 @@ const CreateNewAlertBtn = () => {
         element.id === id ? { ...element, ...updatedData } : element) // Update the element with the given ID
         )
     );
+
+    console.log(elements)
   };
 
   return (

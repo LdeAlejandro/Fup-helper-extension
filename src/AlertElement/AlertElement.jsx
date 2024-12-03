@@ -8,7 +8,7 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
   const [hours, setHours] = useState(data.HH || ""); // State to set hours
   const [minutes, setMinutes] = useState(data.mm || ""); // State to set minutes
   const [timeLeft, setTimeLeft] = useState(data.timeout || 0); // State to track time left
-  const [showElements, setShowElements] = useState(true); // State to control element visibility
+  const [showElements, setShowElements] = useState(data.showElements!==undefined ? data.showElements : true); // State to control element visibility
   let timerRef = useRef(null); // reference to the timer id
 
   // Initial state update on data change 
@@ -18,6 +18,7 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
     setHours(data.HH || "");
     setMinutes(data.mm || "");
     setTimeLeft(data.timeout || 0);
+    console.log("effect: ", data.showElements)
   }, [data]); // Add data as a dependency
 
   // Countdown logic and notification trigger
@@ -94,12 +95,21 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
 
   // Function to handle the edit button
   const handleEdit = () => {
+   
     setShowElements(true); // show elements 
+   onUpdate(id, { showElements: true }); // update showElements to parent
+    console.log(showElements)
+    console.log("data: ",showElements)
   };
 
   // Function to handle the set timer button
   const setTimer = () => {
+   
     setShowElements(false); // hide elements when the timer is set
+    console.log(showElements)
+   onUpdate(id, { showElements: false }); // update showElements to parent
+    console.log("data: ",showElements)
+    
     const hoursInMilliseconds = Number(hours) * 60 * 60 * 1000;
     const minutesInMilliseconds = Number(minutes) * 60 * 1000;
     const totalMilliseconds = hoursInMilliseconds + minutesInMilliseconds; //  calculate total milliseconds
@@ -130,7 +140,17 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
   // Function to handle the remove button
   const handleLocalRemove = () => {
     if (timerRef.current) { // if timer is not null
+      
       clearTimeout(timerRef.current); // clear timeout
+      // trigger notification to delete timer from background.js
+      // eslint-disable-next-line no-undef
+      chrome.runtime.sendMessage({
+        id: id, // send id of this element
+        type: "deleteNotification", // send type
+        title: alertTitle, // send title 
+        message: alertDescription, // send description
+        iconUrl: alertImg, // send to be shown in notification 
+      });
     }
     onRemove(id); // remove element
   };

@@ -6,11 +6,11 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // Function to create a notification
-function createNotification(title, message, iconUrl, timeout) {
-  console.log('Notification will be shown in:', timeout);
-
+let timer = [];
+function createNotification(id,type, title, message, iconUrl, timeout) {
+  if(type !=="deleteNotification"){
   // trigger notification after timeout finish  
-  setTimeout(() => { 
+  const timerId = setTimeout(() => { 
     // eslint-disable-next-line no-undef
     chrome.notifications.create({
       type: 'basic',
@@ -20,6 +20,18 @@ function createNotification(title, message, iconUrl, timeout) {
       priority: 2,
     });
   }, timeout);
+
+  timer.push({ id: id, timerId: timerId });
+  console.log(timer)
+  }else{
+    const index = timer.findIndex(element => element.id === id);
+    if (index !== -1) {
+      clearTimeout(timer[index].timerId);
+      timer.splice(index, 1);
+    }else{
+      console.log("not timer id found")
+    }
+  }
 }
 
 // Listen for messages from the React app (popup or content script)
@@ -28,9 +40,8 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   
   console.log('Message received:', message);
 
-  if (message.type === 'showNotification') { // if message type is showNotification
-    console.log("Triggering notification");
-    createNotification(message.title, message.message, message.iconUrl, message.timeout); // create notification 
+  if (message) { // if message type is showNotification
+    createNotification(message.id, message.type, message.title, message.message, message.iconUrl, message.timeout); // create notification 
   }
 });
 
