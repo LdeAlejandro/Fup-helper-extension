@@ -86,6 +86,7 @@ const CreateNewAlertBtn = () => {
   <div className='createAlertBtn'>
       <button onClick={addElement}>+</button>
      </div>
+        <a href="https://github.com/LdeAlejandro/Fup-helper-extension" target="_blank" rel="noopener noreferrer"> About this App!</a>
       </>
   )
 }

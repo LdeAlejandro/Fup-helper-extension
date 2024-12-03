@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import alertImg from '../assets/alertIcon.jpg';
+import alertImg from '../assets/alarme.png';
 import './AlertElement.css';
 
 const AlertElement = ({ id, onRemove, data, onUpdate }) => {

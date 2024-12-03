@@ -26,3 +26,15 @@
   .createAlertBtn button:hover  {
     background-color: #1565C0; 
   }
+
+  a{
+    text-decoration: none;
+    color: #FBC02D;
+    display: flex;
+    margin-left: 20px;
+    margin-bottom: 20px;
+  }
+
+  a:hover{
+    color: #1565C0;
+  }
