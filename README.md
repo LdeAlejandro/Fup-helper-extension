@@ -1,70 +1,82 @@
-# Getting Started with Create React App
+# Timer Alert Chrome Extension
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Overview
+This extension helps users set up timers with customizable alerts. You can add multiple timers, each with a title, description, and specific countdown time. When the timer expires, the extension triggers a notification with the provided details, ensuring you never miss important reminders or tasks.
 
-## Available Scripts
+[View Extension on Chrome Web Store](https://chromewebstore.google.com/detail/timer-alarm/agikkjapgncblbhohigjmoeiekmbpjil)
 
-In the project directory, you can run:
+---
 
-### `npm start`
+## Features
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+- **Add Custom Alerts**: Create alerts with a title, description, and a specified countdown duration.
+- **Real-Time Countdown**: See the remaining time for each alert in an easy-to-read format.
+- **Edit or Delete Alerts**: Modify existing alerts or remove them entirely.
+- **Persistent Storage**: Alerts are saved in Chrome's local storage, ensuring they persist even if you close your browser.
+- **Notifications**: Receive desktop notifications when a timer ends.
+- **Multiple Timers**: Add and manage multiple timers simultaneously.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+---
 
-### `npm test`
+## How It Works
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+1. **Add a Timer**: Click the `+` button to create a new alert.
+   - Input the title, description, hours, and minutes.
+   - Set the timer to start the countdown.
 
-### `npm run build`
+2. **Edit a Timer**:
+   - Modify the title, description, or time of an existing timer.
+   - Switch between editing mode and countdown mode.
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+3. **Delete a Timer**:
+   - Remove the timer and its notification using the `X` button.
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+4. **Desktop Notifications**:
+   - When a timer ends, the extension triggers a desktop notification with the alert's details.
+   - Notifications are customizable and include the title, description, and an icon.
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+---
 
-### `npm run eject`
+## Technical Details
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+### Main Components
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+1. **`CreateNewAlertBtn` Component**:
+   - Manages the list of alerts.
+   - Handles state updates and saves changes to Chrome local storage.
+   - Provides functionality to add, remove, or update alerts.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+2. **`AlertElement` Component**:
+   - Represents individual alerts with options to set title, description, and timer values.
+   - Manages timer countdown logic and visibility toggles for editing or countdown mode.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+3. **Background Script**:
+   - Manages notification timers.
+   - Listens for messages from the app to trigger or delete notifications.
+   - Periodically updates the remaining time of all alerts in storage.
 
-## Learn More
+---
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+## Installation
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+1. Download the extension from the [Chrome Web Store](https://chromewebstore.google.com/detail/timer-alarm/agikkjapgncblbhohigjmoeiekmbpjil).
+2. Click "Add to Chrome" and confirm.
+3. Open the extension by clicking its icon in the Chrome toolbar.
 
-### Code Splitting
+---
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+## Usage
 
-### Analyzing the Bundle Size
+1. Open the extension by clicking its icon in Chrome.
+2. Add a timer by filling out the form and clicking "Set."
+3. Edit or delete timers as needed.
+4. Receive notifications when timers expire.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+---
 
-### Making a Progressive Web App
+## Permissions
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+- **Chrome Storage**: Used to save alert data persistently.
+- **Notifications**: Required to display desktop notifications.
 
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+---
