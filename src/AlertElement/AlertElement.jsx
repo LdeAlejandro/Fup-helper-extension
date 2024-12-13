@@ -158,7 +158,9 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
   return (
     <div className="alert-container">
       <p>
-        Title: {alertTitle}
+        <b className="alert-text-category">Title:</b> {alertTitle}
+        <br />
+        <b className="alert-text-category">desc:</b> {alertDescription}
         <br />
         Time Left: {formatTime(timeLeft)}
       </p>
@@ -221,7 +223,7 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
         <button className="deleteElement" onClick={handleLocalRemove}>
           X
         </button>
-      </div>
+      </div><br />
       <hr />
     </div>
   );

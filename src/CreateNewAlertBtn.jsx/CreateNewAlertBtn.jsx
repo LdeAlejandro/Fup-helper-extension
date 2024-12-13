@@ -94,6 +94,8 @@ const CreateNewAlertBtn = () => {
         {" "}
         About this App!
       </a>
+
+      <p className="version-text">Version 1.2 Last update 12/12/24</p>
     </>
   );
 };

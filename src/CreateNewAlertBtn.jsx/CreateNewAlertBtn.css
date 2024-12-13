@@ -38,3 +38,10 @@
   a:hover{
     color: #1565C0;
   }
+
+  .version-text{
+  color: lightskyblue;
+  display: flex;
+  margin-left: 20px;
+  margin-bottom: 20px;
+}
