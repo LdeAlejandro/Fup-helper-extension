@@ -41,7 +41,7 @@ function createNotification(id,type, title, message, iconUrl, timeout) {
   }else{ // delete timer
     const index = timers.findIndex(element => element.id === id); // get index by id
     if (index !== -1) { // if the index is found
-      clearTimeout(timer[index].timerId); // clear timeout of the element
+      clearTimeout(timers[index].timerId); // clear timeout of the element
       timers.splice(index, 1); // delete the element from the array
     }else{
       console.log("not timer id found")
