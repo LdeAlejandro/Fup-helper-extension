@@ -6,10 +6,19 @@ chrome.runtime.onInstalled.addListener(() => {
 });
 
 // Function to create a notification
-let timer = [];
+let timers = [];
 function createNotification(id,type, title, message, iconUrl, timeout) {
+     const existingTimers = timers.filter(timer => timer.id === id); // check if there is an existing timer by the id
+
+  if (existingTimers.length > 0) { // if there is a timer clear corresponding timeout
+    for (const timer of existingTimers) {
+      clearTimeout(timer.timerId);
+    }
+    timers = timers.filter(timer => timer.id !== id); // Remove the old timer from the array
+  }
+  
   if(type !=="deleteNotification"){
-  // trigger notification after timeout finish  
+  // trigger notification after timeout finish 
   const timerId = setTimeout(() => { 
     // eslint-disable-next-line no-undef
     chrome.notifications.create({
@@ -19,15 +28,21 @@ function createNotification(id,type, title, message, iconUrl, timeout) {
       message: message,
       priority: 2,
     });
+    
+        console.log("fire");
+        const thisTimerIndex = timers.findIndex(time => time.id === id); // get the index of this timer by id
+        if (thisTimerIndex !== -1) {// if the index is found
+          timers.splice(thisTimerIndex, 1); // delete the element from the array
+        }
   }, timeout);
 
-  timer.push({ id: id, timerId: timerId });
-  console.log(timer)
-  }else{
-    const index = timer.findIndex(element => element.id === id);
-    if (index !== -1) {
-      clearTimeout(timer[index].timerId);
-      timer.splice(index, 1);
+  timers.push({ id: id, timerId: timerId });
+  console.log(timers)
+  }else{ // delete timer
+    const index = timers.findIndex(element => element.id === id); // get index by id
+    if (index !== -1) { // if the index is found
+      clearTimeout(timer[index].timerId); // clear timeout of the element
+      timers.splice(index, 1); // delete the element from the array
     }else{
       console.log("not timer id found")
     }
