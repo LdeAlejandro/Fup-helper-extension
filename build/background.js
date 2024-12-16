@@ -5,6 +5,20 @@ chrome.runtime.onInstalled.addListener(() => {
   console.log('Extension installed');
 });
 
+//
+
+// Listen for messages from the React app (popup or content script)
+// eslint-disable-next-line no-undef
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  
+  console.log('Message received:', message);
+
+  if (message) { // if message type is showNotification
+    createNotification(message.id, message.type, message.title, message.message, message.iconUrl, message.timeout); // create notification 
+    console.log("MESSAGE TARGET TIME, ", message.targetTime)
+  }
+});
+
 // Function to create a notification
 let timers = [];
 function createNotification(id,type, title, message, iconUrl, timeout) {
@@ -49,28 +63,27 @@ function createNotification(id,type, title, message, iconUrl, timeout) {
   }
 }
 
-// Listen for messages from the React app (popup or content script)
-// eslint-disable-next-line no-undef
-chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-  
-  console.log('Message received:', message);
-
-  if (message) { // if message type is showNotification
-    createNotification(message.id, message.type, message.title, message.message, message.iconUrl, message.timeout); // create notification 
-  }
-});
 
 // Function to update the timeout in Chrome storage every second
+function updateTimeout() {
 setInterval(() => {
-  
   // Get the current elements from Chrome storage
   // eslint-disable-next-line no-undef
   chrome.storage.local.get('elements', (items) => {
     let elements = items.elements || []; // Default to an empty array if no elements are found
     let updatedElements = elements.map(element => {// Update elements array
-      if (element.timeout > 0) { // if timeout is greater than 0
+      const timeLeft = calculateTimeLeft(element.targetTime);
+      //console.log("MESSAGE TARGET TIME: ", element.targetTime)
+      //console.log("MESSAGE CURRENT TIME: ", new Date())
+      if (timeLeft > 0) { // if timeout is greater than 0
         // Decrease the timeout by 1000 milliseconds (1 second)
-        element.timeout = Math.max(0, element.timeout - 1000); // set timeout to 0 if it is less than 0
+        element.timeout = Math.max(0, timeLeft - 1000); // set timeout to 0 if it is less than 0
+
+      }else{ // if timeout is less than or equal to 0  
+        element.targetTime = {year: "", month: "", day: "", hours: "", minutes: "", seconds: ""};
+        element.timeout = 0; // set timeout to 0
+              // eslint-disable-next-line no-undef
+    chrome.storage.local.get('elements', (items) => {console.log(items)});
       }
       return element; // return updated element 
     });
@@ -88,3 +101,60 @@ setInterval(() => {
     });
   });
 }, 1000);
+}
+
+updateTimeout();
+
+// Function to convert a date object (with year, month, day, hour, minute) into a Date object
+function convertToDate(dateObj) {
+
+  const date = new Date(
+    dateObj.year , // Default to current year if missing
+    dateObj.month, // Months are zero-indexed in JS, default to January
+    dateObj.day, // Default to 1st day of the month
+    dateObj.hours,
+    dateObj.minutes,
+    dateObj.seconds 
+  );
+
+  return date;
+
+  // if (!dateObj || typeof dateObj !== "object") {
+  //   console.error("convertToDate: Invalid dateObj received:", dateObj);
+  //   return new Date(); // Fallback to the current date
+  // }
+
+  
+}
+
+function convertToMiliseconds(date){
+
+  const hoursInMilliseconds = Number(date.hours) * 60 * 60 * 1000;
+  const minutesInMilliseconds = Number(date.minutes) * 60 * 1000;
+  const totalMilliseconds = hoursInMilliseconds + minutesInMilliseconds;
+
+  return totalMilliseconds;
+}
+
+//function to calculate timeleft in ms base on target Time and current time
+function calculateTimeLeft(targetTime) { // calculate time left
+ 
+
+  const thisTargetTime = convertToDate(targetTime);
+  if (thisTargetTime > 0){  
+    console.log("TARGET TIME ", targetTime);
+
+  const currentTime = new Date(); // get current time
+  const timeLeft =  thisTargetTime - currentTime ;// calculate time left
+  console.log("TARGET TIME: ", thisTargetTime, "CURRENT TIME: ", currentTime,"TIMELEFT: ", timeLeft);
+  if (timeLeft > 0){
+    
+     return timeLeft; // return total milliseconds time left
+
+  }else{
+    return 0; // return 0
+  }
+}else {
+  return 0;
+}
+}

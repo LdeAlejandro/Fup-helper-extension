@@ -8,7 +8,8 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
   const [hours, setHours] = useState(data.HH || ""); // State to set hours
   const [minutes, setMinutes] = useState(data.mm || ""); // State to set minutes
   const [timeLeft, setTimeLeft] = useState(data.timeout || 0); // State to track time left
-  const [showElements, setShowElements] = useState(data.showElements!==undefined ? data.showElements : true); // State to control element visibility
+  const [showElements, setShowElements] = useState(data.showElements!==undefined ? data.showElements : true);// State to control element visibility
+  const [targetTime, setTargetTime] = useState(new Date(data.targetTime) || ""); // State to track target time 
   let timerRef = useRef(null); // reference to the timer id
 
   // Initial state update on data change 
@@ -18,7 +19,7 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
     setHours(data.HH || "");
     setMinutes(data.mm || "");
     setTimeLeft(data.timeout || 0);
-    console.log("effect: ", data.showElements)
+    setTargetTime(new Date(data.targetTime) || "");
   }, [data]); // Add data as a dependency
 
   // Countdown logic and notification trigger
@@ -26,7 +27,7 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
     if (timeLeft > 0) {
       timerRef.current = setTimeout(() => { //
         // update time left 
-        setTimeLeft((prevTimeLeft) => Math.max(prevTimeLeft - 1000, 0)); // update time left Math.max prevent negative time
+        setTimeLeft(Math.max(data.timeout - 1000, 0)); // update time left Math.max prevent negative time
         onUpdate(id, { timeout: timeLeft - 1000 }); // update time left to parent
       }, 1000);
     } else if (timeLeft === 0) { // if time left is 0
@@ -61,12 +62,12 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
 
   // Function to format time 
   const formatTime = (time) => {
-    const hours = Math.floor(time / 3600000); // convert milliseconds to hours
-    const minutes = Math.floor((time % 3600000) / 60000); // convert milliseconds to minutes
-    const seconds = Math.floor((time % 60000) / 1000); // convert milliseconds to seconds
-    return `${hours.toString().padStart(2, "0")}:${minutes
+    const hoursToMilliseconds = Math.floor(time / 3600000); // convert milliseconds to hours
+    const minutesToMilliseconds = Math.floor((time % 3600000) / 60000); // convert milliseconds to minutes
+    const secondsToMilliseconds = Math.floor((time % 60000) / 1000); // convert milliseconds to seconds
+    return `${hoursToMilliseconds.toString().padStart(2, "0")}:${minutesToMilliseconds
       .toString()
-      .padStart(2, "0")}:${seconds.toString().padStart(2, "0")}`; // return formatted time
+      .padStart(2, "0")}:${secondsToMilliseconds.toString().padStart(2, "0")}`; // return formatted time
   };
 
   // Function to handle changes in the Title input fields
@@ -98,21 +99,59 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
    
     setShowElements(true); // show elements 
    onUpdate(id, { showElements: true }); // update showElements to parent
-    console.log(showElements)
-    console.log("data: ",showElements)
+
   };
+
+  const getTargetTime = (hour, minute) => {
+    // get current date
+    const currentDate = new Date(); // get current date
+    const currentHour = currentDate.getHours(); // get current hour
+    const currentMinute = currentDate.getMinutes(); //  get current minute
+
+    // calculate target time
+    const thisTargetTime = new Date(
+      currentDate.getFullYear(), // get current year
+      currentDate.getMonth() , // get current month
+      currentDate.getDate(), // get current date
+      currentHour + Number(hour), // add hours to current hour
+      currentMinute + Number(minute), // add minutes to current minute
+      currentDate.getSeconds() // get current seconds
+    );
+
+    // format target time
+    const targetTimeComponents = {
+      year: thisTargetTime.getFullYear(),
+      month: thisTargetTime.getMonth(),
+      day: thisTargetTime.getDate(),
+      hours: thisTargetTime.getHours(),
+      minutes: thisTargetTime.getMinutes(),
+      seconds: thisTargetTime.getSeconds()
+    };
+
+    console.log("Target Time: " ,targetTimeComponents);
+
+    setTargetTime(targetTimeComponents); // set targetTime;
+
+    return targetTimeComponents;
+  }
 
   // Function to handle the set timer button
   const setTimer = () => {
-   
+
     setShowElements(false); // hide elements when the timer is set
-    console.log(showElements)
+ 
    onUpdate(id, { showElements: false }); // update showElements to parent
-    console.log("data: ",showElements)
+  
     
     const hoursInMilliseconds = Number(hours) * 60 * 60 * 1000;
     const minutesInMilliseconds = Number(minutes) * 60 * 1000;
     const totalMilliseconds = hoursInMilliseconds + minutesInMilliseconds; //  calculate total milliseconds
+
+    
+    const messageTargetTime = getTargetTime(hours, minutes);
+    onUpdate(id, { targetTime: messageTargetTime });
+
+    console.log("FOR MESSAGE TARGET TIME, ", messageTargetTime)
 
     setTimeLeft(totalMilliseconds); // update time left 
     onUpdate(id, { timeout: totalMilliseconds }); // update time left to parent
@@ -125,7 +164,8 @@ const AlertElement = ({ id, onRemove, data, onUpdate }) => {
       title: alertTitle, // send title 
       message: alertDescription, // send description
       iconUrl: alertImg, // send to be shown in notification
-      timeout: totalMilliseconds, // send timeout 
+      timeout: totalMilliseconds,// send timeout
+      targetTime: messageTargetTime  // send target time
     });
 
     // if (Notification.permission !== "granted") {

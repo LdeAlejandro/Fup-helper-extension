@@ -24,6 +24,7 @@ const CreateNewAlertBtn = () => {
   // save data everytime it changes in the local storage
   useEffect(() => {
     //localStorage.setItem("elements",  JSON.stringify(elements)); // Save elements to localStorage
+   
     // eslint-disable-next-line no-undef
     chrome.storage.local.set({ elements }, () => {
       // Save elements to Chrome storage
@@ -66,7 +67,6 @@ const CreateNewAlertBtn = () => {
         )
     );
 
-    console.log(elements)
   };
 
   return (
@@ -95,7 +95,7 @@ const CreateNewAlertBtn = () => {
         About this App!
       </a>
 
-      <p className="version-text">Version 1.2 Last update 12/12/24</p>
+      <p className="version-text">Version 1.5 Last update 16/12/24</p>
     </>
   );
 };
